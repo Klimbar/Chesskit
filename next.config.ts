@@ -81,9 +81,5 @@ export default withSentryConfig(nextConfig, {
   org: process.env.SENTRY_ORG,
   project: "javascript-nextjs",
   widenClientFileUpload: true,
-  reactComponentAnnotation: {
-    enabled: true,
-  },
-  hideSourceMaps: true,
-  disableLogger: true,
+  silent: true, // Suppresses all logs
 });
