@@ -1118,7 +1118,7 @@ function Board({
       }
 
       // We don't need the check anymore since we're returning false to stop react-chessboard
-      const result = playMove({
+      playMove({
         from: currentFrom,
         to: currentTo,
         promotion: promotionPiece,
