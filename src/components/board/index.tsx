@@ -1103,30 +1103,29 @@ function Board({
 
   const onPromotionPieceSelect = useCallback(
     (piece?: PromotionPieceOption, from?: Square, to?: Square) => {
-      if (!piece) return false;
+      if (!piece) {
+        resetMoveClick();
+        return false;
+      }
       const promotionPiece = piece[1]?.toLowerCase() ?? "q";
 
-      if (moveClickFrom && moveClickTo) {
-        const result = playMove({
-          from: moveClickFrom,
-          to: moveClickTo,
-          promotion: promotionPiece,
-        });
+      const currentFrom = moveClickFrom || from;
+      const currentTo = moveClickTo || to;
+
+      if (!currentFrom || !currentTo) {
         resetMoveClick();
-        return !!result;
+        return false;
       }
 
-      if (from && to) {
-        const result = playMove({
-          from,
-          to,
-          promotion: promotionPiece,
-        });
-        resetMoveClick();
-        return !!result;
-      }
+      // We don't need the check anymore since we're returning false to stop react-chessboard
+      const result = playMove({
+        from: currentFrom,
+        to: currentTo,
+        promotion: promotionPiece,
+      });
 
-      resetMoveClick(moveClickFrom);
+      resetMoveClick();
+      // ALWAYS return false to prevent react-chessboard from subsequently triggering onPieceDrop
       return false;
     },
     [moveClickFrom, moveClickTo, playMove, resetMoveClick]
