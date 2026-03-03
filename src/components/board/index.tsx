@@ -125,7 +125,7 @@ const CustomPiece = memo(
           zIndex: isDragging ? 100 : 50,
           transform: isDragging
             ? "scale(1.05) translateZ(30px)"
-            : "scale(1) translateZ(20px)",
+            : "scale(1) translateZ(2px)",
           filter: `${dragShadow} ${checkShadow} ${hueFilter}`.trim(),
           transition: "filter 0.1s ease-out", // Removed transform transition
           pointerEvents: "none",
