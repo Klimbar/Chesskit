@@ -109,21 +109,10 @@ export function getSquareRenderer() {
             ...containerStyle,
             position: "relative",
             overflow: "visible",
+            backgroundColor,
+            boxShadow: backgroundColor ? `inset 0 0 0 0.5px ${backgroundColor}, 0 0 0 0.5px ${backgroundColor}` : undefined,
           }}
         >
-          {backgroundColor && (
-            <div
-              style={{
-                position: "absolute",
-                top: "-0.5px",
-                bottom: "-0.5px",
-                left: "-0.5px",
-                right: "-0.5px",
-                backgroundColor,
-                zIndex: -1,
-              }}
-            />
-          )}
           {highlightSquareStyle && <div style={highlightSquareStyle} />}
           {playableSquareStyle && <div style={playableSquareStyle} />}
           {children}
@@ -163,46 +152,42 @@ export function getSquareRenderer() {
 
 const rightClickSquareStyle = (color?: string): CSSProperties => ({
   position: "absolute",
-  width: "100%",
-  height: "100%",
+  inset: 0,
   backgroundColor: color || "#eb6150",
   opacity: "0.8",
-  transform: "translateZ(1px)",
+  zIndex: 10,
   pointerEvents: "none",
 });
 
 const activeSquareStyle: CSSProperties = {
   position: "absolute",
-  width: "100%",
-  height: "100%",
+  inset: 0,
   backgroundColor: "#fad541",
   opacity: 0.5,
-  transform: "translateZ(1px)",
+  zIndex: 10,
   pointerEvents: "none",
 };
 
 const playableSquareStyles: CSSProperties = {
   position: "absolute",
-  width: "100%",
-  height: "100%",
+  inset: 0,
   backgroundColor: "rgba(0,0,0,.14)",
   padding: "35%",
   backgroundClip: "content-box",
   borderRadius: "50%",
   boxSizing: "border-box",
-  transform: "translateZ(1px)",
+  zIndex: 10,
   pointerEvents: "none",
 };
 
 const captureRingStyle: CSSProperties = {
   position: "absolute",
-  width: "100%",
-  height: "100%",
+  inset: 0,
   borderRadius: "50%",
   boxSizing: "border-box",
   background:
     "radial-gradient(transparent 60%, rgba(0,0,0,.14) 60%, rgba(0,0,0,.14) 100%)",
-  transform: "translateZ(1px)",
+  zIndex: 10,
   pointerEvents: "none",
 };
 
@@ -210,13 +195,12 @@ const previousMoveSquareStyle = (
   moveClassification?: MoveClassification | null
 ): CSSProperties => ({
   position: "absolute",
-  width: "100%",
-  height: "100%",
+  inset: 0,
   backgroundColor:
     moveClassification && moveClassification !== MoveClassification.Opening
       ? CLASSIFICATION_COLORS[moveClassification]
       : "#fad541",
   opacity: 0.5,
-  transform: "translateZ(1px)",
+  zIndex: 10,
   pointerEvents: "none",
 });
