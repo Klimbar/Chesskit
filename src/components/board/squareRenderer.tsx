@@ -2,9 +2,7 @@ import { MoveClassification } from "@/types/enums";
 import { atom, useAtomValue } from "jotai";
 import Image from "next/image";
 import { CSSProperties, forwardRef, memo, useMemo, useContext } from "react";
-import {
-  CustomSquareProps,
-} from "react-chessboard/dist/chessboard/types";
+import { CustomSquareProps } from "react-chessboard/dist/chessboard/types";
 import { CLASSIFICATION_COLORS } from "@/constants";
 import { BoardStateContext } from "./index";
 
@@ -12,7 +10,8 @@ export function getSquareRenderer() {
   const SquareRendererComponent = memo(
     forwardRef<HTMLDivElement, CustomSquareProps>((props, ref) => {
       const { children, square, style } = props;
-      const { backgroundColor, ...containerStyle } = (style || {}) as any;
+      const { backgroundColor, ...containerStyle } = (style ||
+        {}) as React.CSSProperties;
 
       const {
         boardHue,

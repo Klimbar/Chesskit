@@ -17,6 +17,8 @@ import {
   useRef,
   useState,
   memo,
+  createContext,
+  useContext,
 } from "react";
 import { Color, MoveClassification } from "@/types/enums";
 import { Chess } from "chess.js";
@@ -28,15 +30,12 @@ import PlayerHeader from "./playerHeader";
 import { boardHueAtom, pieceSetAtom } from "./states";
 import type { ClickedSquare } from "./types";
 import tinycolor from "tinycolor2";
-import "./board.css";
-import { createContext, useContext } from "react";
 
 const clickedSquaresAtom = atom<ClickedSquare[]>([]);
 const playableSquaresAtom = atom<Square[]>([]);
 const captureSquaresAtom = atom<Square[]>([]);
 const moveClickFromAtom = atom<Square | null>(null);
 const moveClickToAtom = atom<Square | null>(null);
-
 
 const defaultCurrentPositionAtom = atom<CurrentPosition>({} as CurrentPosition);
 const defaultShowPlayerMoveIconAtom = atom(false);
@@ -94,7 +93,8 @@ const CustomPiece = memo(
     isDragging: boolean;
     piece: string;
   }) => {
-    const { pieceSet, checkSquare, turn, boardHue } = useContext(BoardStateContext);
+    const { pieceSet, checkSquare, turn, boardHue } =
+      useContext(BoardStateContext);
 
     const isCheck =
       (piece === "wK" && turn === "w" && checkSquare) ||
@@ -152,8 +152,6 @@ export const PIECE_CODES = [
   "bK",
 ] as const satisfies Piece[];
 
-
-
 function Board({
   id: boardId,
   canPlay,
@@ -195,7 +193,6 @@ function Board({
   const setPlayableSquares = useSetAtom(playableSquaresAtom);
   const setCaptureSquares = useSetAtom(captureSquaresAtom);
 
-
   // Jotai Getters (derived state)
   const [moveClickFrom, setMoveClickFrom] = [
     useAtomValue(moveClickFromAtom),
@@ -210,12 +207,7 @@ function Board({
 
   const customPieces = useMemo(() => {
     return PIECE_CODES.reduce<CustomPieces>((acc, pieceCode) => {
-      acc[pieceCode] = (props) => (
-        <CustomPiece
-          {...props}
-          piece={pieceCode}
-        />
-      );
+      acc[pieceCode] = (props) => <CustomPiece {...props} piece={pieceCode} />;
       return acc;
     }, {});
   }, []);
@@ -248,14 +240,19 @@ function Board({
     useMemo(() => animationDurationAtom || atom(150), [animationDurationAtom])
   );
 
-  const animationDurationToUse = animationDurationAtom ? externalAnimationDuration : localAnimationDuration;
-  const setAnimationDurationToUse = useCallback((duration: number) => {
-    if (animationDurationAtom) {
-      setExternalAnimationDuration(duration);
-    } else {
-      setLocalAnimationDuration(duration);
-    }
-  }, [animationDurationAtom, setExternalAnimationDuration]);
+  const animationDurationToUse = animationDurationAtom
+    ? externalAnimationDuration
+    : localAnimationDuration;
+  const setAnimationDurationToUse = useCallback(
+    (duration: number) => {
+      if (animationDurationAtom) {
+        setExternalAnimationDuration(duration);
+      } else {
+        setLocalAnimationDuration(duration);
+      }
+    },
+    [animationDurationAtom, setExternalAnimationDuration]
+  );
 
   // Refs for event handling and drag state
   const isAltPressedRef = useRef(false);
@@ -270,7 +267,6 @@ function Board({
   const dragOriginSquareRef = useRef<Square | null>(null);
   const dragPieceRef = useRef<string | null>(null);
   const rightClickDragStartRef = useRef<Square | null>(null);
-
 
   // Custom pointer drag refs
   const customDragGhostRef = useRef<HTMLDivElement | null>(null);
@@ -389,8 +385,6 @@ function Board({
     },
     [boardOrientation]
   );
-
-
 
   const animateReturnFlight = useCallback(
     (
@@ -614,7 +608,7 @@ function Board({
 
       return !!result;
     },
-    [isPiecePlayable, playMove]
+    [isPiecePlayable, playMove, setAnimationDurationToUse]
   );
 
   const handleGlobalPointerUp = useCallback(
@@ -718,6 +712,7 @@ function Board({
       game,
       setMoveClickFrom,
       setMoveClickTo,
+      setAnimationDurationToUse,
     ]
   );
 
@@ -903,6 +898,7 @@ function Board({
       setMoveClickTo,
       handleGlobalPointerMoveRightClick,
       handleGlobalPointerUpRightClick,
+      setAnimationDurationToUse,
     ]
   );
 
@@ -970,7 +966,6 @@ function Board({
         to: actualTargetSquare,
       });
 
-
       resetMoveClick(result ? undefined : piece ? square : undefined);
     },
     [
@@ -981,6 +976,7 @@ function Board({
       resetMoveClick,
       setClickedSquares,
       setMoveClickTo,
+      setAnimationDurationToUse,
     ]
   );
 
@@ -1099,7 +1095,7 @@ function Board({
     document.addEventListener("contextmenu", handleContextMenuUndo, true);
     return () =>
       document.removeEventListener("contextmenu", handleContextMenuUndo, true);
-  }, [undoMove, abortCustomDrag]);
+  }, [undoMove, abortCustomDrag, setAnimationDurationToUse]);
 
   const onPromotionPieceSelect = useCallback(
     (piece?: PromotionPieceOption, from?: Square, to?: Square) => {
@@ -1254,50 +1250,49 @@ function Board({
           onPointerDownCapture={handleBoardPointerDownCapture}
           onPointerUpCapture={handleBoardPointerUpCapture}
         >
-        <BoardStateContext.Provider
-          value={{
-            pieceSet,
-            checkSquare,
-            turn: game.turn(),
-            boardHue,
-            boardSize: boardSize || 400,
-            currentPositionAtom,
-            clickedSquaresAtom,
-            playableSquaresAtom,
-            captureSquaresAtom,
-            showPlayerMoveIconAtom:
-              showPlayerMoveIconAtom || defaultShowPlayerMoveIconAtom,
-            moveClickFromAtom,
-          }}
-
-        >
-          <Chessboard
-            id={`${boardId}-${canPlay}`}
-            position={gameFen}
-            onPieceDrop={onPieceDrop}
-            boardOrientation={
-              boardOrientation === Color.White ? "white" : "black"
-            }
-            customBoardStyle={customBoardStyle}
-            customArrows={customArrows}
-            areArrowsAllowed={false}
-            arePiecesDraggable={false}
-            isDraggablePiece={isPiecePlayable}
-            customSquare={SquareRendererComponent}
-            onSquareClick={handleSquareLeftClick}
-            onPieceClick={(piece, square) =>
-              handleSquareLeftClick(square, piece)
-            }
-            onSquareRightClick={handleSquareRightClick}
-            onPieceDragBegin={handlePieceDragBegin}
-            onPieceDragEnd={handlePieceDragEnd}
-            onPromotionPieceSelect={onPromotionPieceSelect}
-            showPromotionDialog={showPromotionDialog}
-            promotionToSquare={moveClickTo}
-            animationDuration={animationDurationToUse}
-            customPieces={customPieces}
-          />
-        </BoardStateContext.Provider>
+          <BoardStateContext.Provider
+            value={{
+              pieceSet,
+              checkSquare,
+              turn: game.turn(),
+              boardHue,
+              boardSize: boardSize || 400,
+              currentPositionAtom,
+              clickedSquaresAtom,
+              playableSquaresAtom,
+              captureSquaresAtom,
+              showPlayerMoveIconAtom:
+                showPlayerMoveIconAtom || defaultShowPlayerMoveIconAtom,
+              moveClickFromAtom,
+            }}
+          >
+            <Chessboard
+              id={`${boardId}-${canPlay}`}
+              position={gameFen}
+              onPieceDrop={onPieceDrop}
+              boardOrientation={
+                boardOrientation === Color.White ? "white" : "black"
+              }
+              customBoardStyle={customBoardStyle}
+              customArrows={customArrows}
+              areArrowsAllowed={false}
+              arePiecesDraggable={false}
+              isDraggablePiece={isPiecePlayable}
+              customSquare={SquareRendererComponent}
+              onSquareClick={handleSquareLeftClick}
+              onPieceClick={(piece, square) =>
+                handleSquareLeftClick(square, piece)
+              }
+              onSquareRightClick={handleSquareRightClick}
+              onPieceDragBegin={handlePieceDragBegin}
+              onPieceDragEnd={handlePieceDragEnd}
+              onPromotionPieceSelect={onPromotionPieceSelect}
+              showPromotionDialog={showPromotionDialog}
+              promotionToSquare={moveClickTo}
+              animationDuration={animationDurationToUse}
+              customPieces={customPieces}
+            />
+          </BoardStateContext.Provider>
         </Grid>
 
         <PlayerHeader

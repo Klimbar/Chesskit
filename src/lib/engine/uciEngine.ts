@@ -387,7 +387,7 @@ export class UciEngine {
 
     const onNewMessage = (messages: string[]) => {
       if (!setPartialEval) return;
-      
+
       const now = performance.now();
       if (now - lastUpdate < THROTTLE_MS) return;
       lastUpdate = now;

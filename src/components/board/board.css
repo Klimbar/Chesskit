@@ -46,3 +46,10 @@
   clip-path: none !important;
   transform-style: preserve-3d !important;
 }
+
+@font-face {
+  font-family: 'ChessMerida';
+  src: url('/fonts/chess_merida_unicode.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}

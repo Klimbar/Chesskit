@@ -90,7 +90,7 @@ const fetchLichessEval = async (
 
     return res.json();
   } catch (error) {
-    // We intentionally silence TimeoutError and DOMException logs here. 
+    // We intentionally silence TimeoutError and DOMException logs here.
     // Failing over to the local WebAssembly engine is a routine, intended behavior
     // and does not need to flood the user's console visually.
     if (!(error instanceof Error && error.name === "TimeoutError")) {

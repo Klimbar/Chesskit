@@ -1,12 +1,10 @@
 import { LineEval } from "@/types/eval";
 import { ListItem, Skeleton, Typography } from "@mui/material";
-import { useAtomValue } from "jotai";
-import { boardAtom } from "../../../states";
+import { useAtomValue, useSetAtom } from "jotai";
+import { boardAtom, boardAnimationDurationAtom } from "../../../states";
 import { getLineEvalLabel, moveLineUciToSan } from "@/lib/chess";
 import { useChessActions } from "@/hooks/useChessActions";
 import PrettyMoveSan from "@/components/prettyMoveSan";
-import { useSetAtom } from "jotai";
-import { boardAnimationDurationAtom } from "../../../states";
 
 interface Props {
   line: LineEval;

@@ -21,7 +21,7 @@ export const useEngine = (engineName: EngineName | undefined) => {
 
     pickEngine(engineName).then((newEngine) => {
       if (!isMounted) {
-        // If React unmounted this hook while the worker was booting, 
+        // If React unmounted this hook while the worker was booting,
         // instantly kill the orphaned worker to prevent invisible memory/CPU leaks
         newEngine.shutdown();
         return;

@@ -257,21 +257,37 @@ export const getMaterialDifference = (fen: string): number => {
   for (let i = 0; i < placement.length; i++) {
     const c = placement[i];
     switch (c) {
-      case "P": diff += 1; break;
-      case "N": case "B": diff += 3; break;
-      case "R": diff += 5; break;
-      case "Q": diff += 9; break;
-      case "p": diff -= 1; break;
-      case "n": case "b": diff -= 3; break;
-      case "r": diff -= 5; break;
-      case "q": diff -= 9; break;
+      case "P":
+        diff += 1;
+        break;
+      case "N":
+      case "B":
+        diff += 3;
+        break;
+      case "R":
+        diff += 5;
+        break;
+      case "Q":
+        diff += 9;
+        break;
+      case "p":
+        diff -= 1;
+        break;
+      case "n":
+      case "b":
+        diff -= 3;
+        break;
+      case "r":
+        diff -= 5;
+        break;
+      case "q":
+        diff -= 9;
+        break;
     }
   }
 
   return diff;
 };
-
-
 
 export const isCheck = (fen: string): boolean => {
   const game = new Chess(fen);

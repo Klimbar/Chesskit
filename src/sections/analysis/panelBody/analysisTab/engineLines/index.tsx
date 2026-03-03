@@ -4,12 +4,12 @@ import {
   boardAtom,
   currentPositionAtom,
   engineMultiPvAtom,
+  boardAnimationDurationAtom,
 } from "../../../states";
 import { useAtomValue, useSetAtom } from "jotai";
 import { LineEval } from "@/types/eval";
 import { useEffect, useRef } from "react";
 import { useChessActions } from "@/hooks/useChessActions";
-import { boardAnimationDurationAtom } from "../../../states";
 
 export default function EngineLines(props: GridProps) {
   const board = useAtomValue(boardAtom);
@@ -24,9 +24,10 @@ export default function EngineLines(props: GridProps) {
 
   const isStale = position?.fen !== board.fen();
 
-  const engineLines = position?.eval?.lines?.length && !isStale
-    ? position.eval.lines
-    : linesSkeleton;
+  const engineLines =
+    position?.eval?.lines?.length && !isStale
+      ? position.eval.lines
+      : linesSkeleton;
 
   const positionRef = useRef(position);
   const boardRef = useRef(board);
@@ -60,7 +61,7 @@ export default function EngineLines(props: GridProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [setAnimationDuration]);
 
   if (board.isCheckmate()) return null;
 
