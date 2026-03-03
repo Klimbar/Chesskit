@@ -450,6 +450,7 @@ function Board({
 
   const abortCustomDrag = useCallback(() => {
     if (!isDraggingRef.current) return;
+    document.body.classList.remove("is-dragging-piece");
     dragCancelledRef.current = Date.now();
     shouldCancelDragRef.current = true;
     isDraggingRef.current = false;
@@ -615,6 +616,7 @@ function Board({
     (e: PointerEvent) => {
       document.removeEventListener("pointermove", handleGlobalPointerMove);
       document.removeEventListener("pointerup", handleGlobalPointerUp);
+      document.body.classList.remove("is-dragging-piece");
 
       if (!isDraggingRef.current || shouldCancelDragRef.current) {
         return;
@@ -877,6 +879,7 @@ function Board({
         }
 
         dragStartPosRef.current = { x: e.clientX, y: e.clientY, constraints };
+        document.body.classList.add("is-dragging-piece");
         document.addEventListener("pointermove", handleGlobalPointerMove);
         document.addEventListener("pointerup", handleGlobalPointerUp);
       }

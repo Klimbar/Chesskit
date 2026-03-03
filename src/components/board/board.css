@@ -17,6 +17,15 @@
   -webkit-user-drag: none !important; /* Prevent browser-default image drag */
 }
 
+[data-piece]:active {
+  cursor: grabbing !important;
+}
+
+body.is-dragging-piece,
+body.is-dragging-piece * {
+  cursor: grabbing !important;
+}
+
 /* Disable text/element selection on the board */
 [data-boardid],
 [data-boardid] * {
