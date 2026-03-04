@@ -4,10 +4,11 @@ node_modules
 # next.js
 .next/
 out/
-
+next-env.d.ts
 # misc
 .DS_Store
 *.pem
+/docs
 
 # env files
 .env*.local
@@ -20,5 +21,3 @@ tsconfig.tsbuildinfo
 .cdk.staging
 cdk.out
 cdk.context.json
-
-/docs

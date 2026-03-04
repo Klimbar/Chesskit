@@ -461,6 +461,8 @@ function Board({
     shouldCancelDragRef.current = true;
     isDraggingRef.current = false;
     setClickedSquares((prev) => [...prev]);
+    setPlayableSquares([]);
+    setCaptureSquares([]);
     resetMoveClick();
 
     // Let the ghost fly back
@@ -624,17 +626,23 @@ function Board({
       document.removeEventListener("pointerup", handleGlobalPointerUp);
       document.body.classList.remove("is-dragging-piece");
 
+      const wasDraggingVisibly = !!customDragGhostRef.current?.parentNode;
+      let moveSucceeded = false;
+      let isPendingPromotion = false;
+
       if (!isDraggingRef.current || shouldCancelDragRef.current) {
+        if (wasDraggingVisibly) {
+          setPlayableSquares([]);
+          setCaptureSquares([]);
+        }
+        shouldCancelDragRef.current = false;
+        isDraggingRef.current = false;
         return;
       }
 
       const targetSquare = getSquareFromCoords(e.clientX, e.clientY);
       const sourceSquare = dragOriginSquareRef.current;
       const piece = dragPieceRef.current;
-
-      const wasDraggingVisibly = !!customDragGhostRef.current?.parentNode;
-      let moveSucceeded = false;
-      let isPendingPromotion = false;
 
       if (
         wasDraggingVisibly &&
