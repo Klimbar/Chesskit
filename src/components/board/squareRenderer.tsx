@@ -120,12 +120,12 @@ export function getSquareRenderer() {
             <Image
               src={`/icons/${classification}.png`}
               alt="move-icon"
-              width={Math.min(40, boardSize * 0.06)}
-              height={Math.min(40, boardSize * 0.06)}
+              width={Math.min(40, boardSize * 0.05)}
+              height={Math.min(40, boardSize * 0.05)}
               style={{
                 position: "absolute",
-                top: Math.max(-13.5, boardSize * -0.03) + "px",
-                right: Math.max(-13.5, boardSize * -0.03) + "px",
+                top: Math.max(-9, boardSize * -0.015) + "px",
+                right: Math.max(-9, boardSize * -0.015) + "px",
                 zIndex: 100,
                 imageRendering: "auto",
                 filter: boardHue ? `hue-rotate(-${boardHue}deg)` : undefined,

@@ -758,15 +758,24 @@ function Board({
       }
 
       if (e.button === 0) {
-        // Prevent browser default selection/drag on the entire board
-        e.preventDefault();
-
-        setClickedSquares([]);
-        setUserArrows([]);
-
         const target = e.target as HTMLElement;
         const pieceElement = target.closest("[data-piece]") as HTMLElement;
-        if (!pieceElement) return;
+
+        if (!pieceElement) {
+          setClickedSquares((prev) => (prev.length === 0 ? prev : []));
+          setUserArrows((prev) => (prev.length === 0 ? prev : []));
+          return;
+        }
+
+        // Prevent browser default selection/drag only on piece interactions.
+        // For touches, we let CSS touch-action handle it so it doesn't break scrolling loops.
+        // (Wait, actully touch-action handles native swipe, so mouse is the only one needing preventDefault to stop text selection natively if user-select isn't enough, but it doesn't hurt to prevent mouse).
+        if (e.pointerType === "mouse") {
+          e.preventDefault();
+        }
+
+        setClickedSquares((prev) => (prev.length === 0 ? prev : []));
+        setUserArrows((prev) => (prev.length === 0 ? prev : []));
 
         const piece = pieceElement.dataset.piece;
         const squareElement = pieceElement.closest(
@@ -1242,6 +1251,8 @@ function Board({
 
       <Grid
         container
+        direction="column"
+        wrap="nowrap"
         rowGap={1.5}
         justifyContent="center"
         alignItems="center"

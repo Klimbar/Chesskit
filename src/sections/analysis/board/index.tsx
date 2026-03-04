@@ -26,10 +26,10 @@ export default function BoardContainer() {
 
     // 1200 is the lg layout breakpoint
     if (window?.innerWidth < 1200) {
-      return Math.min(width, height - 150);
+      return Math.min(width - 32, height - 190);
     }
 
-    return Math.min(width - 700, height * 0.92);
+    return Math.min(width - 700, height * 0.85);
   }, [screenSize]);
 
   return (
