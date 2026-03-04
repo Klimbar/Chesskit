@@ -229,7 +229,13 @@ function Board({
   // Local State
   const [userArrows, setUserArrows] = useState<Arrow[]>([]);
   const [newArrow, setNewArrow] = useState<Arrow | null>(null);
-  const [showPromotionDialog, setShowPromotionDialog] = useState(false);
+  const [showPromotionDialog, setShowPromotionDialogState] = useState(false);
+  const promotionDialogOpenedAtRef = useRef<number>(0);
+
+  const setShowPromotionDialog = useCallback((show: boolean) => {
+    if (show) promotionDialogOpenedAtRef.current = Date.now();
+    setShowPromotionDialogState(show);
+  }, []);
   const [localAnimationDuration, setLocalAnimationDuration] = useState(150);
 
   // Animation Duration Logic
@@ -1102,6 +1108,11 @@ function Board({
 
   const onPromotionPieceSelect = useCallback(
     (piece?: PromotionPieceOption, from?: Square, to?: Square) => {
+      // Prevent ghost clicks on mobile touch devices (dialog reopening/closing instantly)
+      if (Date.now() - promotionDialogOpenedAtRef.current < 300) {
+        return false;
+      }
+
       if (!piece) {
         resetMoveClick();
         return false;
