@@ -118,7 +118,7 @@ const CustomPiece = memo(
           backgroundSize: "contain",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
-          imageRendering: "auto",
+          imageRendering: "crisp-edges",
           willChange: isDragging || isCheck ? "transform, filter" : "auto",
           backfaceVisibility: "hidden",
           WebkitBackfaceVisibility: "hidden",
@@ -439,6 +439,7 @@ function Board({
         ghost.style.backgroundSize = "contain";
         ghost.style.backgroundRepeat = "no-repeat";
         ghost.style.backgroundPosition = "center";
+        ghost.style.imageRendering = "crisp-edges";
         ghost.style.pointerEvents = "none";
         ghost.style.zIndex = "100";
         ghost.classList.add("piece-return-ghost");
@@ -861,6 +862,7 @@ function Board({
         ghost.style.backgroundSize = "contain";
         ghost.style.backgroundRepeat = "no-repeat";
         ghost.style.backgroundPosition = "center";
+        ghost.style.imageRendering = "crisp-edges";
         ghost.style.pointerEvents = "none";
         ghost.style.zIndex = "9999";
         ghost.style.transform = "scale(1.05)";

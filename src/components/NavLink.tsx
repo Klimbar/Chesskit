@@ -13,6 +13,7 @@ export default function NavLink({
     <MuiLink
       component={NextLink}
       href={href}
+      prefetch={false}
       underline="none"
       color="inherit"
       sx={{ width: "100%" }}

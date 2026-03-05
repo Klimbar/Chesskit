@@ -56,14 +56,25 @@ export function getSquareRenderer() {
         )
       );
 
+      const isLastMove = useAtomValue(
+        useMemo(
+          () =>
+            atom((get) => {
+              const pos = get(currentPositionAtom);
+              return pos.lastMove?.from === square || pos.lastMove?.to === square;
+            }),
+          [currentPositionAtom, square]
+        )
+      );
+
       const classification = useAtomValue(
         useMemo(
           () =>
             atom((get) => {
               const pos = get(currentPositionAtom);
-              const isLastMove =
+              const isLastMoveSquare =
                 pos.lastMove?.from === square || pos.lastMove?.to === square;
-              return isLastMove ? pos.eval?.moveClassification || null : null;
+              return isLastMoveSquare ? pos.eval?.moveClassification || null : null;
             }),
           [currentPositionAtom, square]
         )
@@ -84,10 +95,10 @@ export function getSquareRenderer() {
             ? activeSquareStyle
             : clickedSquare
               ? rightClickSquareStyle(clickedSquare.color)
-              : classification !== null
+              : isLastMove
                 ? previousMoveSquareStyle(classification)
                 : undefined,
-        [clickedSquare, isMoveClickFrom, classification]
+        [clickedSquare, isMoveClickFrom, isLastMove, classification]
       );
 
       const playableSquareStyle: CSSProperties | undefined = useMemo(
@@ -110,7 +121,10 @@ export function getSquareRenderer() {
             position: "relative",
             overflow: "visible",
             backgroundColor,
-            boxShadow: backgroundColor ? `inset 0 0 0 0.5px ${backgroundColor}, 0 0 0 0.5px ${backgroundColor}` : undefined,
+            outline: backgroundColor
+              ? `1px solid ${backgroundColor}`
+              : undefined,
+            zIndex: showIcon ? 20 : undefined,
           }}
         >
           {highlightSquareStyle && <div style={highlightSquareStyle} />}
@@ -120,16 +134,16 @@ export function getSquareRenderer() {
             <Image
               src={`/icons/${classification}.png`}
               alt="move-icon"
-              width={Math.min(40, boardSize * 0.05)}
-              height={Math.min(40, boardSize * 0.05)}
+              width={Math.min(28, boardSize * 0.035)}
+              height={Math.min(28, boardSize * 0.035)}
               style={{
                 position: "absolute",
-                top: Math.max(-9, boardSize * -0.015) + "px",
-                right: Math.max(-9, boardSize * -0.015) + "px",
+                top: "-12%",
+                right: "-12%",
                 zIndex: 100,
                 imageRendering: "auto",
                 filter: boardHue ? `hue-rotate(-${boardHue}deg)` : undefined,
-                transform: "translateZ(40px)",
+                transform: "translateZ(3px)",
                 pointerEvents: "none",
               }}
             />
@@ -152,7 +166,7 @@ export function getSquareRenderer() {
 
 const rightClickSquareStyle = (color?: string): CSSProperties => ({
   position: "absolute",
-  inset: 0,
+  inset: "-0.5px",
   backgroundColor: color || "#eb6150",
   opacity: "0.8",
   zIndex: 10,
@@ -161,7 +175,7 @@ const rightClickSquareStyle = (color?: string): CSSProperties => ({
 
 const activeSquareStyle: CSSProperties = {
   position: "absolute",
-  inset: 0,
+  inset: "-0.5px",
   backgroundColor: "#fad541",
   opacity: 0.5,
   zIndex: 10,
@@ -195,7 +209,7 @@ const previousMoveSquareStyle = (
   moveClassification?: MoveClassification | null
 ): CSSProperties => ({
   position: "absolute",
-  inset: 0,
+  inset: "-0.5px",
   backgroundColor:
     moveClassification && moveClassification !== MoveClassification.Opening
       ? CLASSIFICATION_COLORS[moveClassification]

@@ -37,7 +37,7 @@ export const playMoveSound = () => play("move");
 export const playCheckSound = () => play("check");
 
 export const playSoundFromMove = (move: Move | null) => {
-  if (!move) return playIllegalMoveSound();
+  if (!move || !move.san) return playIllegalMoveSound();
   if (move.san.includes("+") || move.san.includes("#")) return playCheckSound();
   if (move.captured) return playCaptureSound();
   return playMoveSound();

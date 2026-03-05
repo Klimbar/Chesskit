@@ -2,28 +2,36 @@ import { Grid2 as Grid, IconButton, Tooltip } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useAtomValue } from "jotai";
 import { boardAtom, gameAtom } from "../states";
-import { useChessActions } from "@/hooks/useChessActions";
+import { useAnalysisChessActions } from "@/hooks/useAnalysisChessActions";
 import FlipBoardButton from "./flipBoardButton";
 import NextMoveButton from "./nextMoveButton";
 import GoToLastPositionButton from "./goToLastPositionButton";
 import SaveButton from "./saveButton";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 export default function PanelToolBar() {
   const board = useAtomValue(boardAtom);
-  const { resetToStartingPosition: resetBoard, undoMove: undoBoardMove } =
-    useChessActions(boardAtom);
+
+  const { undoMove, resetToStartingPosition } = useAnalysisChessActions(boardAtom);
 
   const boardHistory = board.history();
   const game = useAtomValue(gameAtom);
 
+  const handleUndo = useCallback(() => {
+    undoMove();
+  }, [undoMove]);
+
+  const handleReset = useCallback(() => {
+    resetToStartingPosition();
+  }, [resetToStartingPosition]);
+
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (boardHistory.length === 0) return;
-      if (e.key === "ArrowLeft") {
-        undoBoardMove();
+      if (e.key === "ArrowLeft" && !e.shiftKey) {
+        handleUndo();
       } else if (e.key === "ArrowDown") {
-        resetBoard();
+        handleReset();
       }
     };
 
@@ -32,7 +40,7 @@ export default function PanelToolBar() {
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [undoBoardMove, boardHistory, resetBoard, board]);
+  }, [handleUndo, handleReset, boardHistory]);
 
   return (
     <Grid container justifyContent="center" alignItems="center" size={12}>
@@ -41,7 +49,7 @@ export default function PanelToolBar() {
       <Tooltip title="Reset board">
         <Grid>
           <IconButton
-            onClick={() => resetBoard()}
+            onClick={handleReset}
             disabled={boardHistory.length === 0}
             sx={{ paddingX: 1.2, paddingY: 0.5 }}
           >
@@ -53,7 +61,7 @@ export default function PanelToolBar() {
       <Tooltip title="Go to previous move">
         <Grid>
           <IconButton
-            onClick={() => undoBoardMove()}
+            onClick={handleUndo}
             disabled={boardHistory.length === 0}
             sx={{ paddingX: 1.2, paddingY: 0.5 }}
           >

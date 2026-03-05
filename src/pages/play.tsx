@@ -3,6 +3,7 @@ import Board from "@/sections/play/board";
 import GameInProgress from "@/sections/play/gameInProgress";
 import GameRecap from "@/sections/play/gameRecap";
 import GameSettingsButton from "@/sections/play/gameSettings/gameSettingsButton";
+import PlayMovesPanel from "@/sections/play/movesPanel";
 import { isGameInProgressAtom } from "@/sections/play/states";
 import { Grid2 as Grid } from "@mui/material";
 import { useAtomValue } from "jotai";
@@ -40,6 +41,7 @@ export default function Play() {
           maxWidth: "400px",
         }}
       >
+        <PlayMovesPanel />
         <GameInProgress />
         {!isGameInProgress && <GameSettingsButton />}
         <GameRecap />
