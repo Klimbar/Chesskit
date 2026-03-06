@@ -45,7 +45,6 @@ body.is-dragging-piece * {
 /* Ensure react-chessboard promotion dialog rises above hardware-accelerated custom pieces */
 [data-boardid] > div:not([data-piece]):not([data-square]) {
   z-index: 1000 !important;
-  transform: translateZ(1px);
 }
 
 /* Prevent the board container from cutting off the overflowing promotion dialog */
@@ -53,12 +52,21 @@ body.is-dragging-piece * {
 [data-boardid] div {
   overflow: visible !important;
   clip-path: none !important;
+  /* Keep flat (default) — preserve-3d on every child div creates a compositor layer
+     per element (64+ squares) which is catastrophic on mobile GPUs. */
+  transform-style: flat !important;
+}
+
+/* Only the board root itself needs a 3D stacking context so the promotion
+   dialog can correctly rise above the piece layer. */
+[data-boardid] {
   transform-style: preserve-3d !important;
+  touch-action: none; /* Eliminates 300ms tap delay on square clicks */
 }
 
 @font-face {
-  font-family: 'ChessMerida';
-  src: url('/fonts/chess_merida_unicode.ttf') format('truetype');
+  font-family: "ChessMerida";
+  src: url("/fonts/chess_merida_unicode.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }

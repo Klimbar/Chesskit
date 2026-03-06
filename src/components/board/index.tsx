@@ -124,8 +124,8 @@ const CustomPiece = memo(
           WebkitBackfaceVisibility: "hidden",
           zIndex: isDragging ? 100 : 50,
           transform: isDragging
-            ? "scale(1.05) translateZ(30px)"
-            : "scale(1) translateZ(2px)",
+            ? "scale(1.05) translateZ(0)"
+            : "translateZ(0)",
           filter: `${dragShadow} ${checkShadow} ${hueFilter}`.trim(),
           transition: "filter 0.1s ease-out", // Removed transform transition
           pointerEvents: "none",

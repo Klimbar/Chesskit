@@ -143,7 +143,7 @@ export function getSquareRenderer() {
                 zIndex: 100,
                 imageRendering: "auto",
                 filter: boardHue ? `hue-rotate(-${boardHue}deg)` : undefined,
-                transform: "translateZ(3px)",
+                transform: "none",
                 pointerEvents: "none",
               }}
             />
